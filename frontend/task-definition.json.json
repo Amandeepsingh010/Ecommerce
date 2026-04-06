@@ -1,0 +1,54 @@
+{
+    "family": "luxe-ecommerce",
+    "taskRoleArn": "arn:aws:iam::account-id:role/ecsTaskRole",
+    "executionRoleArn": "arn:aws:iam::account-id:role/ecsExecutionRole",
+    "networkMode": "awsvpc",
+    "requiresCompatibilities": ["FARGATE"],
+    "cpu": "1024",
+    "memory": "2048",
+    "containerDefinitions": [
+      {
+        "name": "luxe-backend",
+        "image": "account-id.dkr.ecr.ap-south-1.amazonaws.com/luxe-ecommerce-backend:latest",
+        "essential": true,
+        "portMappings": [
+          {
+            "containerPort": 8080,
+            "protocol": "tcp"
+          }
+        ],
+        "environment": [
+          {"name": "DB_USERNAME", "value": "${DB_USERNAME}"},
+          {"name": "DB_PASSWORD", "value": "${DB_PASSWORD}"},
+          {"name": "JWT_SECRET", "value": "${JWT_SECRET}"}
+        ],
+        "logConfiguration": {
+          "logDriver": "awslogs",
+          "options": {
+            "awslogs-group": "/ecs/luxe-backend",
+            "awslogs-region": "ap-south-1",
+            "awslogs-stream-prefix": "ecs"
+          }
+        }
+      },
+      {
+        "name": "luxe-frontend",
+        "image": "account-id.dkr.ecr.ap-south-1.amazonaws.com/luxe-ecommerce-frontend:latest",
+        "essential": true,
+        "portMappings": [
+          {
+            "containerPort": 3000,
+            "protocol": "tcp"
+          }
+        ],
+        "logConfiguration": {
+          "logDriver": "awslogs",
+          "options": {
+            "awslogs-group": "/ecs/luxe-frontend",
+            "awslogs-region": "ap-south-1",
+            "awslogs-stream-prefix": "ecs"
+          }
+        }
+      }
+    ]
+  }
